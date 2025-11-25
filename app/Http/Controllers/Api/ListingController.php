@@ -156,7 +156,6 @@ class ListingController extends Controller
             return response()->json(['message' => 'Listing not found'], 404);
         }
 
-        // Paprastas check - turėtum naudoti Policy
         if ($listing->user_id != auth()->id() && auth()->id() != 1) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
