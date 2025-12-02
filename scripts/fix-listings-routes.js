@@ -48,8 +48,8 @@ try {
     const aliases = `    // ⚠️ CRITICAL - DO NOT REMOVE THESE ALIASES! ⚠️
     // Used by: welcome.tsx, listings/index.tsx, listings/show.tsx, dashboard.tsx
     // These are required for API calls to work properly
-    apiIndex: Object.assign(index, index),
-    apiShow: Object.assign(show, show),
+    apiIndex: index,
+    apiShow: show,
 `;
     
     // Check if we need a comma (if last char is not a comma and not opening brace)
