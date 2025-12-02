@@ -105,8 +105,21 @@ export default function ListingsIndex() {
                 if (minPrice) params.append('min_price', minPrice);
                 if (maxPrice) params.append('max_price', maxPrice);
 
+                // Use apiIndex if available, otherwise fallback to index
+                const routeFn = (listings.apiIndex && typeof listings.apiIndex === 'function') 
+                    ? listings.apiIndex 
+                    : (listings.index && typeof listings.index === 'function')
+                    ? listings.index
+                    : null;
+                
+                if (!routeFn) {
+                    console.error('Route function not available. listings object:', listings);
+                    console.error('Available keys:', Object.keys(listings));
+                    throw new Error('Route function not available. Please check the route configuration.');
+                }
+
                 const url =
-                    listings.apiIndex().url + (params.toString() ? `?${params.toString()}` : '');
+                    routeFn().url + (params.toString() ? `?${params.toString()}` : '');
                 const res = await fetch(url, {
                     credentials: 'include',
                 });

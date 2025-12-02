@@ -87,7 +87,19 @@ export default function ListingShow({ id }: { id: number }) {
                 setLoading(true);
                 setError(null);
 
-                const res = await fetch(listings.apiShow(id).url, {
+                // Use apiShow if available, otherwise fallback to show
+                const routeFn = (listings.apiShow && typeof listings.apiShow === 'function') 
+                    ? listings.apiShow 
+                    : (listings.show && typeof listings.show === 'function')
+                    ? listings.show
+                    : null;
+                
+                if (!routeFn) {
+                    console.error('Route function not available. listings object:', listings);
+                    throw new Error('Route function not available.');
+                }
+
+                const res = await fetch(routeFn(id).url, {
                     credentials: 'include',
                 });
 
