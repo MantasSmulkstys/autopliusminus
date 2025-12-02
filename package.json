@@ -2,8 +2,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "build:ssr": "vite build && vite build --ssr",
+        "build": "vite build && node scripts/fix-listings-routes.js",
+        "build:ssr": "vite build && vite build --ssr && node scripts/fix-listings-routes.js",
+        "fix:routes": "node scripts/fix-listings-routes.js",
         "dev": "vite",
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
