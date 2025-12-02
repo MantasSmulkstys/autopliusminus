@@ -29,7 +29,7 @@ class CarModelController extends Controller
      */
     public function index()
     {
-        return response()->json(CarModel::all(), 200);
+        return response()->json(CarModel::with('brand')->get(), 200);
     }
 
 
@@ -64,7 +64,7 @@ class CarModelController extends Controller
             return response()->json(['message' => 'Brand not found'], 404);
         }
 
-        return response()->json($brand->carModels, 200);
+        return response()->json($brand->carModels()->with('brand')->get(), 200);
     }
 
     /**
@@ -125,7 +125,7 @@ class CarModelController extends Controller
      */
     public function show($id)
     {
-        $carModel = CarModel::find($id);
+        $carModel = CarModel::with('brand')->find($id);
 
         if (!$carModel) {
             return response()->json(['message' => 'Car model not found'], 404);

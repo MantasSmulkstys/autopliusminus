@@ -14,7 +14,9 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
+        // Use the JWT-based API guard as the default so all "auth" middleware
+        // (web and api) will authenticate via JWT instead of session cookies.
+        'guard' => env('AUTH_GUARD', 'api'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 

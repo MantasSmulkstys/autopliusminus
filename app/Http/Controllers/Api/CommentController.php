@@ -76,12 +76,20 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
+        if (! auth('api')->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        if (auth('api')->user()->is_blocked ?? false) {
+            return response()->json(['message' => 'User is blocked'], 403);
+        }
+
         $validated = $request->validate([
             'listing_id' => 'required|exists:listings,id',
             'content' => 'required|string|min:1'
         ]);
 
-        $validated['user_id'] = auth()->id() ?? 1; // Placeholder
+        $validated['user_id'] = auth('api')->id();
 
         $comment = Comment::create($validated);
         return response()->json($comment, 201);
@@ -146,6 +154,21 @@ class CommentController extends Controller
             return response()->json(['message' => 'Comment not found'], 404);
         }
 
+        $user = auth('api')->user();
+
+        if (! $user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        if ($user->is_blocked ?? false) {
+            return response()->json(['message' => 'User is blocked'], 403);
+        }
+
+        // Only owner or admin can edit a comment
+        if ($comment->user_id !== $user->id && $user->role !== 'admin') {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $validated = $request->validate([
             'content' => 'required|string|min:1'
         ]);
@@ -179,7 +202,38 @@ class CommentController extends Controller
             return response()->json(['message' => 'Comment not found'], 404);
         }
 
+        $user = auth('api')->user();
+
+        if (! $user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        if ($user->is_blocked ?? false) {
+            return response()->json(['message' => 'User is blocked'], 403);
+        }
+
+        // Only owner or admin can delete a comment
+        if ($comment->user_id !== $user->id && $user->role !== 'admin') {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $comment->delete();
+        return response()->json(null, 204);
+    }
+
+    /**
+     * Admin-only: delete any comment by ID.
+     */
+    public function adminDestroy($id)
+    {
+        $comment = Comment::find($id);
+
+        if (! $comment) {
+            return response()->json(['message' => 'Comment not found'], 404);
+        }
+
+        $comment->delete();
+
         return response()->json(null, 204);
     }
 }

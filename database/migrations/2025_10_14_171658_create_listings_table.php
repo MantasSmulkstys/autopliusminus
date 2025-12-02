@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->integer('mileage');
             $table->string('color');
-            $table->enum('status', ['pending', 'approved', 'rejected', 'sold'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'sold', 'reserved'])->default('pending');
             $table->text('admin_comment')->nullable();
             $table->timestamps();
         });

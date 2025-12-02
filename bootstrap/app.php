@@ -15,7 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+        // Do not encrypt the JWT cookie so the JWT guard can read it directly.
+        // The cookie name must match config('jwt.cookie_key_name').
+        $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'token']);
 
         $middleware->alias([
             'check.role' => \App\Http\Middleware\CheckRole::class,
